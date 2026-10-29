@@ -1,0 +1,63 @@
+<app-page-header title="Libros" [subtitle]="loading() ? 'Cargando catálogo…' : books().length + ' libros en el catálogo'">
+  <button type="button" class="btn-primary" (click)="openCreate()">+ Nuevo libro</button>
+</app-page-header>
+
+<div class="card">
+  <div class="border-b border-stone-200 p-4">
+    <input
+      type="search"
+      class="form-input sm:max-w-xs"
+      placeholder="Buscar por título o descripción…"
+      [value]="search()"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+
+  @if (loading()) {
+    <app-loading-state text="Cargando libros…" />
+  } @else if (loadFailed()) {
+    <app-empty-state
+      title="No se pudieron cargar los libros"
+      description="Revisa que el API esté corriendo e intenta de nuevo."
+      actionText="Reintentar"
+      (action)="load()"
+    />
+  } @else if (filtered().length === 0) {
+    <app-empty-state title="No hay libros que coincidan" description="Prueba con otro término de búsqueda." />
+  } @else {
+    <ul class="divide-y divide-stone-100">
+      @for (book of visible(); track book.id) {
+        <li class="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:gap-6">
+          <div class="min-w-0 flex-1">
+            <a [routerLink]="[book.id]" class="font-medium text-stone-900 hover:text-brand-700 hover:underline">
+              {{ book.title }}
+            </a>
+            <p class="mt-0.5 text-sm text-stone-500">{{ book.description | truncate: 140 }}</p>
+            <p class="mt-1 text-xs text-stone-400">
+              {{ book.pageCount }} páginas · {{ book.publishDate | date: 'mediumDate' }}
+            </p>
+          </div>
+          <div class="flex shrink-0 gap-1">
+            <a [routerLink]="[book.id]" class="btn-ghost">Ver detalle</a>
+            <button type="button" class="btn-ghost" (click)="openEdit(book)">Editar</button>
+            <button type="button" class="btn-ghost-danger" (click)="confirmDelete(book)">Eliminar</button>
+          </div>
+        </li>
+      }
+    </ul>
+    <app-pagination [page]="page()" [pageSize]="pageSize" [total]="filtered().length" (pageChange)="page.set($event)" />
+  }
+</div>
+
+<app-modal [open]="formOpen()" [title]="editing() ? 'Editar libro' : 'Nuevo libro'" (closed)="closeForm()">
+  <app-book-form [book]="editing()" [saving]="saving()" (save)="save($event)" (cancel)="closeForm()" />
+</app-modal>
+
+<app-confirm-dialog
+  [open]="!!toDelete()"
+  title="Eliminar libro"
+  [message]="deleteMessage()"
+  [busy]="deleting()"
+  (confirmed)="delete()"
+  (cancelled)="toDelete.set(null)"
+/>

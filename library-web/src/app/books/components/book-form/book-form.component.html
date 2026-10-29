@@ -1,0 +1,49 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4" novalidate>
+  <div>
+    <label for="title" class="form-label">Título</label>
+    <input id="title" type="text" class="form-input" formControlName="title" placeholder="Ej. Clean Architecture" />
+    @if (hasError('title', 'required')) {
+      <p class="form-error">El título es obligatorio.</p>
+    }
+    @if (hasError('title', 'maxlength')) {
+      <p class="form-error">Máximo 200 caracteres.</p>
+    }
+  </div>
+
+  <div>
+    <label for="description" class="form-label">Descripción</label>
+    <textarea id="description" rows="3" class="form-input" formControlName="description"></textarea>
+    @if (hasError('description', 'maxlength')) {
+      <p class="form-error">Máximo 2000 caracteres.</p>
+    }
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <label for="pageCount" class="form-label">Páginas</label>
+      <input id="pageCount" type="number" min="1" class="form-input" formControlName="pageCount" />
+      @if (hasError('pageCount', 'min') || hasError('pageCount', 'required')) {
+        <p class="form-error">Debe ser mayor que 0.</p>
+      }
+    </div>
+    <div>
+      <label for="publishDate" class="form-label">Fecha de publicación</label>
+      <input id="publishDate" type="date" class="form-input" formControlName="publishDate" />
+      @if (hasError('publishDate', 'required')) {
+        <p class="form-error">La fecha es obligatoria.</p>
+      }
+    </div>
+  </div>
+
+  <div>
+    <label for="excerpt" class="form-label">Extracto <span class="font-normal text-stone-400">(opcional)</span></label>
+    <textarea id="excerpt" rows="3" class="form-input" formControlName="excerpt"></textarea>
+  </div>
+
+  <div class="flex justify-end gap-2 pt-2">
+    <button type="button" class="btn-secondary" [disabled]="saving()" (click)="cancel.emit()">Cancelar</button>
+    <button type="submit" class="btn-primary" [disabled]="saving()">
+      {{ saving() ? 'Guardando…' : (book() ? 'Guardar cambios' : 'Crear libro') }}
+    </button>
+  </div>
+</form>

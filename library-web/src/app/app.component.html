@@ -1,0 +1,31 @@
+<header class="border-b border-stone-200 bg-white">
+  <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+    <a routerLink="/" class="flex items-center gap-2">
+      <span class="flex h-7 w-7 items-center justify-center rounded bg-brand-600 font-serif text-sm font-semibold text-white">L</span>
+      <span class="font-serif text-lg font-semibold text-stone-900">Library</span>
+    </a>
+    <nav class="flex gap-1">
+      @for (link of links; track link.path) {
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="bg-brand-50 text-brand-700"
+          class="rounded-md px-3 py-1.5 text-sm font-medium text-stone-600 hover:text-stone-900"
+        >
+          {{ link.label }}
+        </a>
+      }
+    </nav>
+  </div>
+</header>
+
+<div class="border-b border-amber-200 bg-amber-50">
+  <p class="mx-auto max-w-6xl px-4 py-2 text-xs text-amber-800">
+    FakeRestAPI no guarda los cambios: las altas, ediciones y eliminaciones responden correctamente pero se reflejan solo en la sesión actual.
+  </p>
+</div>
+
+<main class="mx-auto max-w-6xl px-4 py-8">
+  <router-outlet />
+</main>
+
+<app-toast-container />
